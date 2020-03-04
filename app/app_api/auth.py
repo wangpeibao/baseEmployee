@@ -1,6 +1,6 @@
 from app.app_api import api
 from app.decorate import check_params
-from app.response import success, commit_callback
+from app.response import success, commit_callback, custom
 from app.models import Account, db
 
 
@@ -16,7 +16,9 @@ def auth_register(**data):
     ]
     '''
     # 是否注册过
-
+    account = Account.query.filter_by(phone=data["phone"]).first()
+    if account:
+        return custom(-1, "该账号已注册")
     account = Account(
         phone=data["phone"],
         passwd=data["passwd"],

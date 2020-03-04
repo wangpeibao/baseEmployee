@@ -12,6 +12,7 @@ def success(msg="", data=""):
 def custom(code=-1, msg="", data=""):
     response = jsonify({'code': code, 'msg': msg, 'data': data})
     response.status_code = 200
+    db.session.rollback()
     return response
 
 

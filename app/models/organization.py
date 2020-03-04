@@ -1,4 +1,6 @@
 # 登录账户
+import hashlib
+
 from sqlalchemy import event
 
 from app import db
@@ -19,6 +21,13 @@ class Account(Base):
         res = super(Account, self).to_json(exclude_list=["passwd"])
         return res
 
+    @staticmethod
+    def md5_passwd(passwd):
+        passwd += "wangpeibao"
+        m = hashlib.md5()
+        m.update(passwd.encode("iso-8859-1"))
+        return m.hexdigest()
+
 
 @event.listens_for(Account.name, "set")
 def update_pinyin_name(*args):
@@ -29,3 +38,18 @@ def update_pinyin_name(*args):
         except Exception as e:
             print(e)
             args[0].pinyin = ""
+
+
+# 企业
+class Enterprise(Base):
+    name = db.Column(db.String(32), index=True, unique=True, comment="企业名称")
+
+
+# 员工(账号-企业的关系表)
+class Employee(Base):
+    account_id = db.Column(db.String(32), db.ForeignKey("account.object_id"))
+    enterprise_id = db.Column(db.String(32), db.ForeignKey("enterprise.object_id"))
+
+
+Employee.enterprise = db.relationship("Enterprise", backref="employees", foreign_keys="Enterprise.object_id")
+Employee.account = db.relationship("Account", backref="employees", foreign_keys="Account.object_id")
