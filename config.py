@@ -15,6 +15,8 @@ class Config:
     SEND_FILE_MAX_AGE_DEFAULT = timedelta(seconds=1)
     HOST = "127.0.0.1"
     PORT = 5000
+    REDIS_URL = "redis://:troila@172.27.106.3:6379/0"
+    WORK_ID = 1  # 用于snowflake生成分布式自增ID
 
 
 config = {

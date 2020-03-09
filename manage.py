@@ -12,6 +12,9 @@ migrate = Migrate(app, db)
 manager.add_command("shell", Shell(make_context={"app": app, "db": db}))
 manager.add_command('db', MigrateCommand)
 
+@manager.command
+def test():
+    pass
 
 if __name__ == "__main__":
     manager.run()

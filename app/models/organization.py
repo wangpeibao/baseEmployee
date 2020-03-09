@@ -47,9 +47,9 @@ class Enterprise(Base):
 
 # 员工(账号-企业的关系表)
 class Employee(Base):
-    account_id = db.Column(db.String(32), db.ForeignKey("account.object_id"))
-    enterprise_id = db.Column(db.String(32), db.ForeignKey("enterprise.object_id"))
+    account_id = db.Column(db.BigInteger, db.ForeignKey("account.object_id"))
+    enterprise_id = db.Column(db.BigInteger, db.ForeignKey("enterprise.object_id"))
 
 
-Employee.enterprise = db.relationship("Enterprise", backref="employees", foreign_keys="Enterprise.object_id")
-Employee.account = db.relationship("Account", backref="employees", foreign_keys="Account.object_id")
+Employee.enterprise = db.relationship("Enterprise", backref="employees")
+Employee.account = db.relationship("Account", backref="employees")
