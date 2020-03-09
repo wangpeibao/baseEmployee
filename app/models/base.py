@@ -23,7 +23,7 @@ def gen_id():  # 根据redis+snowflake生成自增分布式ID
 def gen_uuid():  # 生成uuid主键
     return uuid.uuid4().hex
 
-# 数据库自增主键
+# 数据库自增主键（如果只有单台服务，推荐使用自增ID）
 
 
 # 虚拟基础类
