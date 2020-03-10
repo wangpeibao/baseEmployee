@@ -2,6 +2,7 @@
 import hashlib
 
 from sqlalchemy import event
+from sqlalchemy_mptt import BaseNestedSets
 
 from app import db
 from app.models.base import Base
@@ -47,9 +48,19 @@ class Enterprise(Base):
 
 # 员工(账号-企业的关系表)
 class Employee(Base):
-    account_id = db.Column(db.BigInteger, db.ForeignKey("account.object_id"))
-    enterprise_id = db.Column(db.BigInteger, db.ForeignKey("enterprise.object_id"))
+    account_id = db.Column(db.Integer, db.ForeignKey("account.object_id"))
+    enterprise_id = db.Column(db.Integer, db.ForeignKey("enterprise.object_id"))
+    is_owner = db.Column(db.Boolean, default=False)  # 标记位，是否是企业的创建者
 
 
 Employee.enterprise = db.relationship("Enterprise", backref="employees")
 Employee.account = db.relationship("Account", backref="employees")
+
+
+# 部门（无限极）
+class Department(Base, BaseNestedSets):
+    sqlalchemy_mptt_pk_name = "object_id"
+
+    name = db.Column(db.String(32), default="未命名")
+    enterprise_id = db.Column(db.Integer, db.ForeignKey("enterprise.object_id"))
+

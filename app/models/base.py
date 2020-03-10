@@ -30,7 +30,7 @@ def gen_uuid():  # 生成uuid主键
 class Base(AbstractConcreteBase, db.Model):
     __abstract__ = True
 
-    object_id = db.Column(db.BigInteger, primary_key=True, nullable=False, default=gen_id, comment="主键")
+    object_id = db.Column(db.Integer, primary_key=True, nullable=False, autoincrement=True, comment="主键")
     create_time = db.Column(db.DateTime, default=datetime.now, index=True)
     update_time = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, index=True)
 
