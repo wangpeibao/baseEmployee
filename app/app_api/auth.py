@@ -34,6 +34,7 @@ def auth_register(phone, passwd, name):
     return commit_callback(callback=callback, param=(account, ))
 
 
+# 账号登录
 @api.route("/auth/login")
 @check_params
 def auth_login(phone, passwd):
