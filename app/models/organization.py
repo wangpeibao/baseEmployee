@@ -17,6 +17,7 @@ class Account(Base):
     passwd = db.Column(db.String(32), comment="用户名密码")
     name = db.Column(db.String(32), comment="用户账号名")
     pinyin = db.Column(db.String(100), comment="拼音名")
+    api_token = db.Column(db.String(32), comment="登录token")
 
     def to_json(self, exclude_list=()):
         res = super(Account, self).to_json(exclude_list=["passwd"])

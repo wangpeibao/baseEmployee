@@ -32,10 +32,7 @@ def check_params(func):
 # 验证必要参数和类型
 def check_required_and_type(param, req):
     if param['required'] and not req:
-        if param["required-msg"]:
-            return False, param["required"], ""
-        else:
-            return False, "%s为必要参数" % param["name"], ""
+        return False, "%s为必要参数" % param["name"], ""
     data = None
     if req is not None:
         return check_type(param, req)
@@ -64,8 +61,5 @@ def check_type(param, req):
             print(e)
             status = False
     if not status:
-        if param["check-msg"]:
-            return False, param["check-msg"], req
-        else:
-            return False, "%s应该为%s格式" % (param["name"], param["check"]), req
+        return False, "%s应该为%s格式" % (param["name"], param["check"]), req
     return status, "", req
