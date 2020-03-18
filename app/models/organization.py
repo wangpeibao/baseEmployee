@@ -17,7 +17,7 @@ class Account(Base):
     passwd = db.Column(db.String(32), comment="用户名密码")
     name = db.Column(db.String(32), comment="用户账号名")
     pinyin = db.Column(db.String(100), comment="拼音名")
-    api_token = db.Column(db.String(32), comment="登录token")
+    app_token = db.Column(db.String(32), comment="app登录token")
 
     def to_json(self, exclude_list=()):
         res = super(Account, self).to_json(exclude_list=["passwd"])
@@ -46,6 +46,13 @@ def update_pinyin_name(*args):
 class Enterprise(Base):
     name = db.Column(db.String(32), index=True, unique=True, comment="企业名称")
 
+    def __init__(self, *args, **kwargs):
+        super(Enterprise, self).__init__(*args, **kwargs)
+        # 给企业创建一个根部门
+        root_department = Department(name="根部门")
+        db.session.add(root_department)
+        self.departments.append(root_department)
+
 
 # 员工(账号-企业的关系表)
 class Employee(Base):
@@ -64,4 +71,18 @@ class Department(Base, BaseNestedSets):
 
     name = db.Column(db.String(32), default="未命名")
     enterprise_id = db.Column(db.Integer, db.ForeignKey("enterprise.object_id"))
+
+
+Department.enterprise = db.relationship("Enterprise", backref="departments")
+
+
+# 部门－员工关系
+class DepartmentMem(Base):
+    employee_id = db.Column(db.Integer, db.ForeignKey("employee.object_id"))
+    department_id = db.Column(db.Integer, db.ForeignKey("department.object_id"))
+    is_manager = db.Column(db.Boolean, default=0, comment="是否是部门负责人")
+
+
+DepartmentMem.employee = db.relationship("Employee", backref="department_members")
+DepartmentMem.department = db.relationship("Department", backref="department_members")
 

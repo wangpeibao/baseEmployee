@@ -47,7 +47,7 @@ def auth_login(phone, passwd):
     account = Account.query.filter_by(phone=phone, passwd=Account.md5_passwd(passwd)).first()
     if not account:
         return custom(-1, "账户名或密码错误")
-    account.api_token = uuid.uuid4().hex
+    account.app_token = uuid.uuid4().hex
 
     def callback(param):
         return param.to_json()
