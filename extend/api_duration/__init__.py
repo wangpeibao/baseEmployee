@@ -1,6 +1,6 @@
 # 记录sql查询时间和接口访问时间
 from datetime import datetime
-from flask import request
+from flask import request, current_app
 from flask_sqlalchemy import get_debug_queries
 
 
@@ -27,7 +27,7 @@ class ApiDuration(object):
 
         @self.app.after_request
         def get_request_time(response):
-            if app.config["DEBUG"]:
+            if current_app.config["DEBUG"]:
                 length = datetime.now().timestamp() - request.start_time
                 api = ApiTime(path=request.path, duration=int(length * 1000), sql_count=len(get_debug_queries()))
                 db.session.add(api)
