@@ -8,6 +8,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 # 配置文件
 class Config:
+    DEBUG = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_COMMIT_ON_TEARDOWN = False
     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'data.sqlite')
