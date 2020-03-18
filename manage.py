@@ -29,8 +29,9 @@ def get_query_state(response):
         for q in queries:
             count += 1
             duration += q.duration
-        print("查询次数:%d 耗时:%f ms" % (count, duration * 1000))
+        print("查询次数:%d  耗时:%f ms" % (count, duration * 1000))
     return response
+
 
 if __name__ == "__main__":
     manager.run()
