@@ -15,9 +15,11 @@ migrate = Migrate(app, db)
 manager.add_command("shell", Shell(make_context={"app": app, "db": db}))
 manager.add_command('db', MigrateCommand)
 
+
 @manager.command
 def test():
     pass
+
 
 # debug模式下的
 @app.after_request
