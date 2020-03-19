@@ -1,14 +1,14 @@
 from app import db
 from app.app_api import api
-from app.decorate import check_params, verify_login
+from app.decorate import check_params, verify_account, verify_employee, current_enterprise
 from app.models import Enterprise, Employee, DepartmentMem
-from app.response import commit_callback
+from app.response import commit_callback, custom, commit
 from app.decorate import current_account
 
 
 @api.route("/enterprise/create_enterprise", methods=["POST"])
 @check_params
-@verify_login
+@verify_account
 def enterprise_create_enterprise(name):
     '''
     [
@@ -30,3 +30,20 @@ def enterprise_create_enterprise(name):
 
     return commit_callback(callback=callback, param=(employee, ))
 
+
+# 更新企业信息
+@api.route("/enterprise/update_enterprise_info", methods=["POST"])
+@check_params
+@verify_employee
+def enterprise_update_enterprise_info(name):
+    '''
+        [
+            {"name": "name", "required": 1, "check": "string", "description": "企业名"}
+        ]
+    '''
+    if name != current_enterprise.name:  # 修改名字
+        has_enterprise = Enterprise.query.filter_by(name=name).first()
+        if has_enterprise:
+            return custom(-1, "企业名已经被占用")
+        current_enterprise.name = name
+    return commit()
