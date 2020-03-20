@@ -35,8 +35,8 @@ class Base(AbstractConcreteBase, db.Model):
     update_time = db.Column(db.DateTime, default=datetime.now, onupdate=datetime.now, index=True)
 
     @declared_attr
-    def __tablename__(cls):
-        return cls.__name__.lower()
+    def __tablename__(self):
+        return self.__name__.lower()
 
     def to_json(self, exclude_list=()):
         d = dict()
@@ -45,6 +45,10 @@ class Base(AbstractConcreteBase, db.Model):
             col_name = col.name
             if col_name in exclude_list:
                 continue
+            if col_name == "lft":
+                col_name = "left"
+            if col_name == "rgt":
+                col_name = "right"
             value = getattr(self, col_name)
             if value is None:
                 pass

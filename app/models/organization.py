@@ -72,6 +72,13 @@ class Department(Base, BaseNestedSets):
     name = db.Column(db.String(32), default="未命名")
     enterprise_id = db.Column(db.Integer, db.ForeignKey("enterprise.object_id"))
 
+    @staticmethod
+    def get_root_department(enterprise_id):
+        root = Department.query.filter(
+            Department.enterprise_id == enterprise_id,
+            Department.parent_id == None
+        ).first()
+        return root
 
 Department.enterprise = db.relationship("Enterprise", backref="departments")
 

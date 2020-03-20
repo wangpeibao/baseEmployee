@@ -96,7 +96,7 @@ def verify_employee(func):
     @verify_account
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
-        enterprise_id = request.headers.get("EnterpriseID", defualt=int)
+        enterprise_id = request.headers.get("EnterpriseID", default=int)
         employee = Employee.query.options(
             joinedload(Employee.enterprise),
             joinedload(Employee.account)
