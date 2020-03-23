@@ -2,6 +2,7 @@
 import hashlib
 
 from sqlalchemy import event
+from sqlalchemy.orm import joinedload
 from sqlalchemy_mptt import BaseNestedSets
 
 from app import db
@@ -72,6 +73,7 @@ class Department(Base, BaseNestedSets):
     name = db.Column(db.String(32), default="未命名")
     enterprise_id = db.Column(db.Integer, db.ForeignKey("enterprise.object_id"))
 
+    # 获取根部门
     @staticmethod
     def get_root_department(enterprise_id):
         root = Department.query.filter(
@@ -79,6 +81,48 @@ class Department(Base, BaseNestedSets):
             Department.parent_id == None
         ).first()
         return root
+
+    # 获取部门树(全部)
+    @staticmethod
+    def get_department_tree(enterprise_id):
+        return Department.query.filter_by(enterprise_id=enterprise_id).all()
+
+    # 获取一级子部门
+    def get_sub_departments_query(self):  # department query
+        return Department.query.filter(
+            Department.enterprise_id == self.enterprise_id,
+            Department.parent_id == self.object_id
+        )
+
+    # 获取所有子部门
+    def get_all_sub_department_query(self):  # department query
+        return Department.query.filter(
+            Department.enterprise_id == self.enterprise_id,
+            Department.left > self.left,
+            Department.right < self.right
+        )
+
+    # 获取当前部门的员工
+    def get_current_employees_query(self):  # departmentmem query
+        return DepartmentMem.query.options(
+            joinedload(DepartmentMem.employee).joinedload(Employee.account)
+        ).filter(
+            DepartmentMem.department_id == self.object_id
+        )
+
+    # 获取当前部门及子部门的员工
+    def get_all_employees_query(self):  # departmentmem query
+        department_ids = Department.query.filter(
+            Department.enterprise_id == self.enterprise_id,
+            Department.left >= self.left,
+            Department.right <= self.right
+        ).subquery()
+        return DepartmentMem.query.options(
+            joinedload(DepartmentMem.employee).joinedload(Employee.account)
+        ).filter(
+            DepartmentMem.department_id.in_(department_ids)
+        )
+
 
 Department.enterprise = db.relationship("Enterprise", backref="departments")
 
