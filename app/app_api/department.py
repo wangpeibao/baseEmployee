@@ -4,7 +4,7 @@ from sqlalchemy.orm import joinedload
 from app.app_api import api
 from app.decorate import check_params, verify_employee, current_enterprise
 from app.models import Department, db, Employee, DepartmentMem
-from app.response import custom, commit_callback, success
+from app.response import custom, commit_callback, success, commit
 
 
 @api.route("/department/create_department", methods=["POST"])
@@ -100,13 +100,26 @@ def department_get_department_list(department_id, get_employee_info, sub_departm
 @api.route("/department/delete_department", methods=["POST"])
 @check_params
 @verify_employee
-def department_delete_department(department_id, force):
+def department_delete_department(department_id):
     '''
     [
-        {"name": "department_id", "required": 1, "check": "int", "description": "部门ID"},
-        {"name": "force", "required": 0, "check": "bool", "description": "是否强制删除"}
+        {"name": "department_id", "required": 1, "check": "int", "description": "部门ID"}
     ]
     '''
-    pass
+    department = Department.query.filter(
+        Department.enterprise_id == current_enterprise.object_id,
+        Department.object_id == department_id
+    ).first()
+    if not department:
+        return custom(-1, "参数错误")
+    # 当部门下没有人也没有子部门时，可以删除
+    dep_count = department.get_sub_departments_query().count()
+    if dep_count:
+        return custom(-2, "部门下有子部门，请先删除子部门")
+    employee_count = department.get_current_employees_query().count()
+    if employee_count:
+        return custom(-3, "部门下有员工，请移除部门下所有员工")
+    db.session.delete(department)
+    return commit()
 
 
