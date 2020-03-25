@@ -7,7 +7,7 @@ from flask_sqlalchemy import get_debug_queries
 from app import create_app, db
 from config import config
 
-app = create_app(config["dev"])
+app = create_app("default")
 
 manager = Manager(app)
 migrate = Migrate(app, db)

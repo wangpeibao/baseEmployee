@@ -10,12 +10,22 @@ import requests
 class TestTool:
 
     @staticmethod
-    def get(url, params, headers):
+    def get(url, params=(), headers=None):
         try:
-            res = requests.get("127.0.0.1:5000" + url, params=params, headers=headers)
+            res = requests.get(url, params=params, headers=headers)
             res = json.loads(res.content)
-            assert True
-            return res["data"]
+            return res
         except Exception as e:
             print(e)
-            assert False
+            return None
+
+    @staticmethod
+    def post(url, data=(), headers=None):
+        try:
+            res = requests.post("http://127.0.0.1:5000" + url, data=data, headers=headers)
+            res = json.loads(res.content)
+            return res
+        except Exception as e:
+            print(e)
+            return None
+

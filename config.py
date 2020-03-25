@@ -8,6 +8,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 
 # 配置文件
 class Config:
+    PROJECT_NAME = "basic"  # 项目名称，后续的微服务可能会用到
     DEBUG = True
     SQLALCHEMY_TRACK_MODIFICATIONS = True
     SQLALCHEMY_COMMIT_ON_TEARDOWN = False
@@ -20,6 +21,14 @@ class Config:
     WORK_ID = 1  # 用于snowflake生成分布式自增ID
 
 
+class Test(Config):
+
+    SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASEDIR, 'data_test.sqlite')
+    SQLALCHEMY_ECHO = False
+
+
 config = {
-    "dev": Config
+    "dev": Config,
+    "test": Test,
+    "default": Config
 }

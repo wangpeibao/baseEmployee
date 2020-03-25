@@ -35,7 +35,7 @@ def auth_register(phone, passwd, name):
 
 
 # 账号登录
-@api.route("/auth/login")
+@api.route("/auth/login", methods=["POST"])
 @check_params
 def auth_login(phone, passwd):
     '''
