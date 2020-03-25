@@ -35,7 +35,6 @@ class Account(Base):
 @event.listens_for(Account.name, "set")
 def update_pinyin_name(*args):
     if args[1] != args[2]:
-        print(args[1])
         try:
             args[0].pinyin = pinyin.get_pinyin(args[1], splitter="")
         except Exception as e:

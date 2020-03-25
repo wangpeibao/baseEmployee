@@ -11,8 +11,8 @@ import unittest
 
 class TestRegisterLogin(unittest.TestCase):
     rigister_url = "/"
-    phone1 = 15620011759
-    passwd1 = 123456
+    phone1 = "15620011759"
+    passwd1 = "123456"
 
     def setUp(self):
         self.app = create_app("test")
@@ -41,7 +41,7 @@ class TestRegisterLogin(unittest.TestCase):
         ).json
         self.assertEqual(res["code"], -1)
 
-    def test_03_login(self):
+    def test_03_login_success(self):
         res = self.client.post(
             "/app_api/auth/login",
             data={
@@ -52,6 +52,13 @@ class TestRegisterLogin(unittest.TestCase):
         print(res["data"])
         self.assertEqual(res["code"], 200)
 
-
-if __name__ == '__main__':
-    unittest.main()
+    def test_04_login_fail(self):
+        res = self.client.post(
+            "/app_api/auth/login",
+            data={
+                "phone": self.phone1,
+                "passwd": self.passwd1 + "123"
+            }
+        ).json
+        print(res["data"])
+        self.assertEqual(res["code"], -1)

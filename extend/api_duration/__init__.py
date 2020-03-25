@@ -15,7 +15,8 @@ class ApiDuration(object):
 
         # API接口响应时间
         class ApiTime(db.Model):
-            __table_args__ = {"useexisting": True}
+
+            __table_args__ = {"extend_existing": True}
 
             object_id = db.Column(db.Integer, primary_key=True)
             create_time = db.Column(db.DateTime, default=datetime.now)
