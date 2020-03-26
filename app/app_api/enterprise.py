@@ -52,3 +52,10 @@ def enterprise_update_enterprise_info(name):
             return custom(-1, "企业名已经被占用")
         current_enterprise.name = name
     return commit()
+
+
+# 退出企业
+@api.route("/enterprise/quit_enterprise", methods=["POST"])
+@verify_employee
+def enterprise_quit_enterprise():
+    pass
