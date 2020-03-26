@@ -4,13 +4,13 @@
 import json
 
 from app import create_app, db
-from test_api import TestTool
 
 import unittest
 
 
 class TestRegisterLogin(unittest.TestCase):
-    rigister_url = "/"
+    register_url = "/app_api/auth/register"
+    login_url = "/app_api/auth/login"
     phone1 = "15620011759"
     passwd1 = "123456"
 
@@ -21,7 +21,7 @@ class TestRegisterLogin(unittest.TestCase):
 
     def test_01_register_success(self):
         res = self.client.post(
-            "/app_api/auth/register",
+            self.register_url,
             data={
                 "phone": self.phone1,
                 "name": "测试",
@@ -32,7 +32,7 @@ class TestRegisterLogin(unittest.TestCase):
 
     def test_02_register_repeat(self):
         res = self.client.post(
-            "/app_api/auth/register",
+            self.register_url,
             data={
                 "phone": self.phone1,
                 "name": "测试",
@@ -43,7 +43,7 @@ class TestRegisterLogin(unittest.TestCase):
 
     def test_03_login_success(self):
         res = self.client.post(
-            "/app_api/auth/login",
+            self.login_url,
             data={
                 "phone": self.phone1,
                 "passwd": self.passwd1
@@ -54,7 +54,7 @@ class TestRegisterLogin(unittest.TestCase):
 
     def test_04_login_fail(self):
         res = self.client.post(
-            "/app_api/auth/login",
+            self.login_url,
             data={
                 "phone": self.phone1,
                 "passwd": self.passwd1 + "123"

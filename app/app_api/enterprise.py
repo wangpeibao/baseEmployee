@@ -15,6 +15,11 @@ def enterprise_create_enterprise(name):
         {"name": "name", "required": 1, "check": "string", "description": "企业名"}
     ]
     '''
+    # 名字不可重复
+    enterprise = Enterprise.query.filter_by(name=name).first()
+    if enterprise:
+        return custom(-1, "该名字已存在")
+
     enterprise = Enterprise(name=name)
     db.session.add(enterprise)
     employee = Employee(account_id=current_account.object_id, is_owner=True)
