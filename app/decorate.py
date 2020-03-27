@@ -8,7 +8,7 @@ from flask import request
 from sqlalchemy.orm import joinedload
 from werkzeug.local import LocalStack, LocalProxy
 
-from app.models import Account, Employee
+from app.models import Account, Employee, Enterprise
 from app.response import custom
 
 account_stack = LocalStack()
@@ -97,11 +97,14 @@ def verify_employee(func):
     @functools.wraps(func)
     def wrapper(*args, **kwargs):
         enterprise_id = request.headers.get("EnterpriseID", default=int)
-        employee = Employee.query.options(
+        employee = Employee.query.join(Enterprise).options(
             joinedload(Employee.enterprise),
             joinedload(Employee.account)
-        ).filter_by(
-            enterprise_id=enterprise_id, account_id=current_account.object_id).first()
+        ).filter(
+            Enterprise.logout == False,
+            Employee.enterprise_id == enterprise_id,
+            Employee.account_id == current_account.object_id
+        ).first()
         if not employee:
             return custom(-100, "您不在该企业中")
         employee_stack.push(employee)

@@ -45,6 +45,8 @@ def update_pinyin_name(*args):
 # 企业
 class Enterprise(Base):
     name = db.Column(db.String(32), index=True, unique=True, comment="企业名称")
+    logout = db.Column(db.Boolean, index=True, default=False, comment="企业存续状态")
+    logout_name = db.Column(db.String(32), index=True, comment="企业注销之前的名字")
 
     def __init__(self, *args, **kwargs):
         super(Enterprise, self).__init__(*args, **kwargs)
@@ -52,6 +54,16 @@ class Enterprise(Base):
         root_department = Department(name="根部门")
         db.session.add(root_department)
         self.departments.append(root_department)
+
+    def logout(self):
+        self.name = None
+        self.logout = True
+
+
+@event.listens_for(Enterprise.name, "set")
+def update_logout_name(*args):
+    args[0].logout_name = args[1]
+
 
 
 # 员工(账号-企业的关系表)

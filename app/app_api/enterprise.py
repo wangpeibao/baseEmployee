@@ -1,6 +1,6 @@
 from app import db
 from app.app_api import api
-from app.decorate import check_params, verify_account, verify_employee, current_enterprise
+from app.decorate import check_params, verify_account, verify_employee, current_enterprise, current_employee
 from app.models import Enterprise, Employee, DepartmentMem
 from app.response import commit_callback, custom, commit
 from app.decorate import current_account
@@ -54,8 +54,14 @@ def enterprise_update_enterprise_info(name):
     return commit()
 
 
-# 退出企业
-@api.route("/enterprise/quit_enterprise", methods=["POST"])
+# 注销企业
+@api.route("/enterprise/logout", methods=["POST"])
 @verify_employee
 def enterprise_quit_enterprise():
-    pass
+    if not current_employee.is_owner:  # 企业拥有者才可以注销
+        return custom(-1, "企业拥有者才可以注销企业")
+    current_enterprise.logout()
+    return commit()
+
+
+#
