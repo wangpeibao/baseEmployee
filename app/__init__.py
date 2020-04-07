@@ -6,11 +6,12 @@ from flask_redis import FlaskRedis
 
 from config import config
 from extend.api_duration import ApiDuration
+from extend.mq import Rmq
 
 db = SQLAlchemy()
 redis = FlaskRedis()
 api_duration = ApiDuration()
-
+mq = Rmq()
 
 # 创建app
 def create_app(env="default"):
@@ -20,6 +21,7 @@ def create_app(env="default"):
     db.app = app
     redis.init_app(app)
     api_duration.init_app(app, db)
+    mq.init_app(app)
 
     # 注册蓝图
     from .app_api import api as blue_app_api

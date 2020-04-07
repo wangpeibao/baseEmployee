@@ -1,5 +1,6 @@
 import uuid
 
+from app import mq
 from app.app_api import api
 from app.decorate import check_params
 from app.response import commit_callback, custom
@@ -50,6 +51,7 @@ def auth_login(phone, passwd):
     account.app_token = uuid.uuid4().hex
 
     def callback(param):
+        mq.send_log()
         return param.to_json()
 
     return commit_callback(callback=callback, param=(account, ))
