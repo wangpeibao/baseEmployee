@@ -19,13 +19,6 @@ class Rmq:
         # 声明持续化队列名称
         self.init_send_log()
 
-    def test_send(self):  # 测试发送(如果有多个消费者，消费时是轮询状态)
-        channel = self.connect.channel()
-        for i in range(100):
-            channel.queue_declare(queue="hello")
-            channel.basic_publish(exchange="", routing_key="hello", body="%d" % i)
-            print("发送成功")
-
     def init_send_log(self):  # 自定义的操作日志生产者(业务简单，直连交换机即可，持续化存储)
         try:
             self.channel.exchange_declare(
@@ -48,11 +41,11 @@ class Rmq:
         except Exception as e:
             print("操作日志队列已存在", e)
 
-    def send_log(self):
+    def send_log(self, body):
         self.channel.basic_publish(
             exchange="exchange_op_logs",
             routing_key="op_logs",
-            body=json.dumps({"manager_id": 1}),
+            body=json.dumps(body),
             properties=pika.BasicProperties(delivery_mode=2)
         )
 
